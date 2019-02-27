@@ -328,8 +328,8 @@ public class Main extends javax.swing.JFrame {
                         //System.out.println("Quantita: " + quantity);
                         Row row = s.getRow(i);
 
-                        //calcolo lo sconto
-                        BigDecimal money = new BigDecimal(formatter.formatCellValue(row.getCell(89, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)));
+                        //calcolo lo sconto (bisogna aggiungere il replaceAll perche' java tende a formattare i numeri in base al Locale di un computer e alcune lingue usano la , per separare i centesimi che BigDecimal non accetta
+                        BigDecimal money = new BigDecimal(formatter.formatCellValue(row.getCell(89, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)).replaceAll(",","."));
                         BigDecimal percentage = money.multiply(percentageToRemove);
                         percentage = percentage.divide(new BigDecimal("100"), RoundingMode.HALF_EVEN);
                         percentage = percentage.setScale(2, RoundingMode.HALF_EVEN);
@@ -380,7 +380,7 @@ public class Main extends javax.swing.JFrame {
                 //System.out.println(sb.toString());
                 out.close();
                 wb.close();
-            } catch (IOException | EncryptedDocumentException ex) {
+            } catch (Throwable ex) {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                 JOptionPane.showMessageDialog(mainPanel, "Errore nella creazione del CSV", "Errore", JOptionPane.ERROR_MESSAGE);
                 errors = true;
