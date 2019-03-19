@@ -7,10 +7,14 @@ package it.ldc.libridicarta;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import static java.time.temporal.TemporalQueries.localTime;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,12 +24,12 @@ import javax.swing.JTextArea;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
-import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.commons.io.FilenameUtils;
 
 /**
  *
@@ -234,7 +238,7 @@ public class Main extends javax.swing.JFrame {
         
         int returnVal = chooser.showOpenDialog(null);
         if(returnVal == JFileChooser.APPROVE_OPTION) {
-            fileDestination.setText(chooser.getSelectedFile().getAbsolutePath());
+            fileDestination.setText(chooser.getSelectedFile().getAbsolutePath() + "\\");
         }
     }//GEN-LAST:event_fileDestinationButtonActionPerformed
 
@@ -350,7 +354,9 @@ public class Main extends javax.swing.JFrame {
                         sb.append(',');
                         sb.append("Autore: " + formatter.formatCellValue(row.getCell(39, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)) + "<br>Casa editrice: " + formatter.formatCellValue(row.getCell(48, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)) + "<br>ISBN: " + formatter.formatCellValue(row.getCell(66, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)));//short description
                         sb.append(',');
+                        sb.append('"');
                         sb.append(description);//description
+                        sb.append('"');
                         sb.append(',');
                         sb.append("taxable");//tax_status
                         sb.append(',');
@@ -368,13 +374,17 @@ public class Main extends javax.swing.JFrame {
                         sb.append(',');
                         sb.append("+"+Integer.toString(quantity));//manage_stock/stock_quantitiy
                         sb.append(',');
+                        sb.append('"');
                         sb.append(category);//category_ids
+                        sb.append('"');
                         sb.append('\n');
                     }
                     int percentage = (100 * i)/rows;
                     publish(percentage);
                 }
-                PrintWriter out = new PrintWriter(new FileOutputStream(fileDestination.getText() + "WooCommerce_CSV_Import.csv"), true);
+                Date date = new Date();
+                LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                PrintWriter out = new PrintWriter(new FileOutputStream(fileDestination.getText() + localDate.getDayOfMonth()+ "_" +localDate.getMonthValue()+ "_" + localDate.getYear()+ "_" + LocalTime.now().getHour() + LocalTime.now().getMinute() + LocalTime.now().getSecond() + "_" + FilenameUtils.removeExtension(f.getName())+ "_" +"WooCommerce_CSV_Import.csv"), true);
                 out.println(sb.toString());
 
                 //System.out.println(sb.toString());
