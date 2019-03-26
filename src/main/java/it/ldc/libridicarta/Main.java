@@ -370,7 +370,9 @@ public class Main extends javax.swing.JFrame {
                         sb.append(',');
                         sb.append(money.toString());//prezzo_in_offerta
                         sb.append(',');
+                        sb.append('"');
                         sb.append(formatter.formatCellValue(row.getCell(89, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)));//Prezzo_di_listino
+                        sb.append('"');
                         sb.append(',');
                         sb.append("+"+Integer.toString(quantity));//manage_stock/stock_quantitiy
                         sb.append(',');
