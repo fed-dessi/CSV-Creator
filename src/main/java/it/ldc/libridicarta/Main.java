@@ -5,8 +5,13 @@
  */
 package it.ldc.libridicarta;
 
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -14,7 +19,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import static java.time.temporal.TemporalQueries.localTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,7 +43,7 @@ import org.apache.commons.io.FilenameUtils;
  * @author Federico
  */
 public class Main extends javax.swing.JFrame {
-    File workbook;
+    File workbook, export;
     /**
      * Creates new form Main
      */
@@ -72,6 +79,12 @@ public class Main extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         categoryValue = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        fileExport = new javax.swing.JTextField();
+        fileExportButton = new javax.swing.JButton();
+        variazioneCheckbox = new javax.swing.JCheckBox();
+        variazioneCombobox = new javax.swing.JComboBox<>();
+        jLabel7 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("WooCommerce CSV Creator");
@@ -123,6 +136,26 @@ public class Main extends javax.swing.JFrame {
         jLabel5.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel5.setText("Inserisci la categoria:");
 
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel6.setText("File Export di Woocommerce:");
+
+        fileExport.setEnabled(false);
+
+        fileExportButton.setText("Seleziona..");
+        fileExportButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fileExportButtonActionPerformed(evt);
+            }
+        });
+
+        variazioneCheckbox.setText("Variazione?");
+
+        variazioneCombobox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Nuovo", "Usato" }));
+
+        jLabel7.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel7.setText("Condizione:");
+        jLabel7.setVisible(false);
+
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
@@ -130,43 +163,53 @@ public class Main extends javax.swing.JFrame {
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(mainPanelLayout.createSequentialGroup()
+                        .addComponent(variazioneCheckbox)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(variazioneCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(196, 196, 196))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
                         .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, mainPanelLayout.createSequentialGroup()
+                            .addComponent(startButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1))
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
+                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(mainPanelLayout.createSequentialGroup()
+                                .addComponent(selectedFile)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(fileChooserButton))
+                            .addGroup(mainPanelLayout.createSequentialGroup()
                                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(mainPanelLayout.createSequentialGroup()
                                         .addComponent(jLabel1)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                     .addGroup(mainPanelLayout.createSequentialGroup()
                                         .addComponent(jLabel2)
-                                        .addGap(0, 0, Short.MAX_VALUE))
+                                        .addGap(0, 20, Short.MAX_VALUE))
                                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
                                         .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, mainPanelLayout.createSequentialGroup()
-                                                .addComponent(jLabel3)
-                                                .addGap(61, 61, 61)
-                                                .addComponent(salePercentage, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(0, 0, Short.MAX_VALUE))
+                                            .addComponent(fileExport, javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(fileDestination)
                                             .addComponent(descriptionValue, javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(categoryValue, javax.swing.GroupLayout.Alignment.LEADING))
                                         .addGap(6, 6, 6)))
-                                .addComponent(fileDestinationButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(mainPanelLayout.createSequentialGroup()
-                                .addComponent(selectedFile)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(fileChooserButton)))
+                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(fileDestinationButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(fileExportButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                         .addGap(31, 31, 31))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
-                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(startButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jScrollPane1))
-                        .addContainerGap())
                     .addGroup(mainPanelLayout.createSequentialGroup()
                         .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel6)
                             .addComponent(jLabel4)
+                            .addGroup(mainPanelLayout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addGap(61, 61, 61)
+                                .addComponent(salePercentage, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jLabel5))
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -183,7 +226,18 @@ public class Main extends javax.swing.JFrame {
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(fileDestination, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(fileDestinationButton))
-                .addGap(24, 24, 24)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(variazioneCheckbox)
+                    .addComponent(variazioneCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(fileExport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(fileExportButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(salePercentage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -191,16 +245,39 @@ public class Main extends javax.swing.JFrame {
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(descriptionValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(14, 14, 14)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(categoryValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 70, Short.MAX_VALUE)
+                .addGap(25, 25, 25)
                 .addComponent(startButton, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 329, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 329, Short.MAX_VALUE)
                 .addContainerGap())
         );
+
+        jLabel6.setVisible(false);
+        fileExport.setVisible(false);
+        fileExportButton.setVisible(false);
+        variazioneCheckbox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if(e.getStateChange() == ItemEvent.SELECTED){
+                    variazioneCombobox.setVisible(true);
+                    jLabel7.setVisible(true);
+                    jLabel6.setVisible(true);
+                    fileExport.setVisible(true);
+                    fileExportButton.setVisible(true);
+                } else if(e.getStateChange() == ItemEvent.DESELECTED){
+                    variazioneCombobox.setVisible(false);
+                    jLabel7.setVisible(false);
+                    jLabel6.setVisible(false);
+                    fileExport.setVisible(false);
+                    fileExportButton.setVisible(false);
+                }
+            }
+        });
+        variazioneCombobox.setVisible(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -210,9 +287,7 @@ public class Main extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(mainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -244,13 +319,30 @@ public class Main extends javax.swing.JFrame {
 
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
         if(salePercentage != null && !salePercentage.getText().equals("")){
+            startButton.setEnabled(false);
             logArea.setText(logArea.getText() + System.lineSeparator() + "Inizio creazione del file csv..");
-            //inizio swingworker
-            new csvCreator(workbook, this.logArea).execute();
+            
+            if(variazioneCheckbox.isSelected()){
+                new csvVariationsCreator(workbook, export, variazioneCombobox.getSelectedIndex(), this.logArea).execute();
+            }else{
+                new csvCreator(workbook, this.logArea).execute();
+            }
+            
         } else{
             JOptionPane.showMessageDialog(mainPanel, "Inserisci una percentuale di sconto!", "Errore", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_startButtonActionPerformed
+
+    private void fileExportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileExportButtonActionPerformed
+        JFileChooser chooser = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("CSV File", "csv");
+        chooser.setFileFilter(filter);
+        int returnVal = chooser.showOpenDialog(null);
+        if(returnVal == JFileChooser.APPROVE_OPTION) {
+            fileExport.setText(chooser.getSelectedFile().getName());
+            export = chooser.getSelectedFile();
+        }
+    }//GEN-LAST:event_fileExportButtonActionPerformed
     
     class csvCreator extends SwingWorker<Integer, Integer>{
         File f;
@@ -414,7 +506,370 @@ public class Main extends javax.swing.JFrame {
             }else{
                 logArea.setText(JTA.getText() + System.lineSeparator() + "Errore nella creazione del file CSV!");
             }
-            
+            startButton.setEnabled(true);
+        }
+    }
+    
+    
+    StringBuilder createLine(StringBuilder sb, String type, String sku, String name, String short_description, String description, String prezzo_in_offerta, String prezzo_di_listino, String quantity, String category, String parent_sku, String position, String attNome1, String attValuta1, String attPredef1){
+        sb.append("");//id
+        sb.append(',');
+        sb.append(type);//type
+        sb.append(',');
+        sb.append(sku);//sku
+        sb.append(',');
+        sb.append(name);//name
+        sb.append(',');
+        sb.append("1");//pubblicato
+        sb.append(',');
+        sb.append("visible");//catalog_visibility
+        sb.append(',');
+        sb.append(short_description);//short description
+        sb.append(',');
+        sb.append('"');
+        sb.append(description);//description
+        sb.append('"');
+        sb.append(',');
+        sb.append("taxable");//tax_status
+        sb.append(',');
+        sb.append("standard");//tax_class
+        sb.append(',');
+        sb.append("1");//stock_status
+        sb.append(',');
+        sb.append("0");//backorders
+        sb.append(',');
+        sb.append("1");//reviews_allowed
+        sb.append(',');
+        sb.append('"');
+        sb.append(prezzo_in_offerta);//prezzo_in_offerta
+        sb.append('"');
+        sb.append(',');
+        sb.append('"');
+        sb.append(prezzo_di_listino);//Prezzo_di_listino
+        sb.append('"');
+        sb.append(',');
+        sb.append(quantity);//manage_stock/stock_quantitiy
+        sb.append(',');
+        sb.append('"');
+        sb.append(category);//category_ids
+        sb.append('"');
+        sb.append(',');
+        sb.append(parent_sku);//parent_sku
+        sb.append(',');
+        sb.append(position);//position
+        sb.append(',');
+        sb.append('"');
+        sb.append(attNome1);//Attributo 1 nome
+        sb.append('"');
+        sb.append(',');
+        sb.append('"');
+        sb.append(attValuta1);//Attributo 1 valuta(e)
+        sb.append('"');
+        sb.append(',');
+        sb.append(attPredef1);//Attributo 1 predefinito
+        sb.append('\n');
+        return sb;
+    }
+    
+    class csvVariationsCreator extends SwingWorker<Integer, Integer>{
+        File f, fExport;
+        JTextArea JTA;
+        String initialJTAText;
+        int indice;
+        boolean errors;
+        
+        public csvVariationsCreator(File f, File fExport, int indice, JTextArea JTA){
+            this.f = f;
+            this.fExport = fExport;
+            this.JTA = JTA;
+            this.indice = indice;
+            this.initialJTAText = JTA.getText();
+            this.errors = false;
+        };
+
+        @Override
+        protected Integer doInBackground() throws Exception {
+            try {
+                
+                //Creazione del workbook
+                Workbook wb = WorkbookFactory.create(f);
+
+                //Creazione del foglio di lavoro
+                Sheet s = wb.getSheetAt(0);
+                
+                
+                //Creazione della prima riga
+                StringBuilder sb = new StringBuilder();
+                sb.append("id");
+                sb.append(',');
+                sb.append("type");
+                sb.append(',');
+                sb.append("sku");
+                sb.append(',');
+                sb.append("name");
+                sb.append(',');
+                sb.append("pubblicato");
+                sb.append(',');
+                sb.append("catalog_visibility");
+                sb.append(',');
+                sb.append("short_description");
+                sb.append(',');
+                sb.append("description");
+                sb.append(',');
+                sb.append("tax_status");
+                sb.append(',');
+                sb.append("tax_class");
+                sb.append(',');
+                sb.append("stock_status");
+                sb.append(',');
+                sb.append("backorders");
+                sb.append(',');
+                sb.append("reviews_allowed");
+                sb.append(',');
+                sb.append("prezzo in offerta");
+                sb.append(',');
+                sb.append("prezzo di listino");
+                sb.append(',');
+                sb.append("magazzino");
+                sb.append(',');
+                sb.append("category_ids");
+                sb.append(',');
+                sb.append("genitore");
+                sb.append(',');
+                sb.append("position");
+                sb.append(',');
+                sb.append("Attributo 1 nome");
+                sb.append(',');
+                sb.append("Attributo 1 valuta(e)");
+                sb.append(',');
+                sb.append("Attributo 1 predefinito");
+                sb.append('\n');
+                
+                int rows = s.getLastRowNum();
+                
+                String description = (descriptionValue.getText()!= null) ? descriptionValue.getText() : "";
+                String category = (categoryValue.getText()!= null) ? categoryValue.getText() : "";
+                BigDecimal percentageToRemove = new BigDecimal(salePercentage.getText());
+                
+                DataFormatter formatter = new DataFormatter();
+                
+                //Array di lettura del CSV export
+                String[] nextRecord; //Linea che sto leggendo nel reader
+                List<String[]> exportList = new ArrayList<String[]>(); // ArrayList che contiene le mie righe dell'export esistenti
+                int rigaExportIndex = 0;
+                HashMap<String, Integer> existingExport = new HashMap<String, Integer>(); //Utilizzo una Hashmap cosi posso recuperare in tempo lineare il numero della riga nella Arraylist
+                
+                //Lettura del CSV Export
+                FileReader filereader = new FileReader(fExport);
+                
+                CSVReader csvReader = new CSVReaderBuilder(filereader).withSkipLines(1).build();
+                while ((nextRecord = csvReader.readNext()) != null) {
+                    if(!nextRecord[1].equals("variation")){
+                        exportList.add(rigaExportIndex, new String[]{nextRecord[2]/*ISBN*/, nextRecord[14] /*quantita*/, nextRecord[24]/*prezzo in offerta*/, nextRecord[25]/*prezzo di listino*/, nextRecord[26]/*categorie*/, nextRecord[1]/*tipo prodotto*/});
+                        existingExport.put(nextRecord[2], rigaExportIndex);
+                        rigaExportIndex++;
+                    }
+                }
+                csvReader.close();
+                filereader.close();
+                
+                
+                
+                //Bisogna inserire solo libri nel csv
+                for(int i = 0; i<rows+1; i++){
+                    //System.out.println("Riga: "+ i + " - ISBN: " + formatter.formatCellValue(s.getRow(i).getCell(66, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)));
+                    //Controllo che sia una riga con un libro (Hanno la quantita)
+                    if(!formatter.formatCellValue(s.getRow(i).getCell(79, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)).equals("")){
+                        
+                        int quantity= Integer.parseInt(formatter.formatCellValue(s.getRow(i).getCell(79, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)));
+                        while(formatter.formatCellValue(s.getRow(i).getCell(66, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)).equals(formatter.formatCellValue(s.getRow(i+1).getCell(66, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)))){
+                            quantity += Integer.parseInt(formatter.formatCellValue(s.getRow(i).getCell(79, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)));
+                            i++;
+                        }
+                        //System.out.println("Quantita: " + quantity);
+                        Row row = s.getRow(i);
+
+                        //calcolo lo sconto (bisogna aggiungere il replaceAll perche' java tende a formattare i numeri in base al Locale di un computer e alcune lingue usano la , per separare i centesimi che BigDecimal non accetta
+                        BigDecimal money = new BigDecimal(formatter.formatCellValue(row.getCell(89, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)).replaceAll(",","."));
+                        BigDecimal percentage = money.multiply(percentageToRemove);
+                        percentage = percentage.divide(new BigDecimal("100"), RoundingMode.HALF_EVEN);
+                        percentage = percentage.setScale(2, RoundingMode.HALF_EVEN);
+                        money = money.subtract(percentage);
+                        
+                         
+                        String type = "simple";
+                        boolean trovato = false;
+                        String[] currentRow;
+                        
+                        //System.out.println("Export Map exists: " + existingExport.get(formatter.formatCellValue(row.getCell(66, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)))!= null);
+                        //System.out.println("Row ISBN: "+ formatter.formatCellValue(row.getCell(66, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)) +"Export List ISBN: "+exportList.get(existingExport.get(formatter.formatCellValue(row.getCell(66, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK))))[0]);
+                        
+                        if(existingExport.get(formatter.formatCellValue(row.getCell(66, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)))!= null) {
+                            if(exportList.get(existingExport.get(formatter.formatCellValue(row.getCell(66, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK))))[5].equals("simple")){
+                                type = "variable";
+                                //Creo la riga del genitore
+                                currentRow = exportList.get(existingExport.get(formatter.formatCellValue(row.getCell(66, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK))));
+                                
+                                createLine(
+                                sb,
+                                type,//type
+                                formatter.formatCellValue(row.getCell(66, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)),//sku
+                                formatter.formatCellValue(row.getCell(16, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)).replaceAll(",","."),//name
+                                "Autore: " + formatter.formatCellValue(row.getCell(39, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)) + "<br>Casa editrice: " + formatter.formatCellValue(row.getCell(48, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)) + "<br>ISBN: " + formatter.formatCellValue(row.getCell(66, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)),//short description
+                                description,//description
+                                "",//prezzo_in_offerta
+                                "",//Prezzo_di_listino
+                                "",//manage_stock/stock_quantitiy
+                                ((category.equals("")) ? currentRow[4] : category),//category_ids
+                                "",//parent_sku
+                                "0",//position
+                                "condizione",//Attributo 1 nome
+                                "Nuovo, Usato",//Attributo 1 valuta(e)
+                                "Usato"//Attributo 1 predefinito
+                                );
+                                
+                                if(indice == 0){ //Sto creando le variazione del nuovo
+                                    //creo la riga dell'usato
+                                    createLine(
+                                    sb,
+                                    "variation",//type
+                                    "",//sku
+                                    formatter.formatCellValue(row.getCell(16, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)).replaceAll(",",".") + " - Usato",//name
+                                    "",//short description
+                                    "",//description
+                                    currentRow[2].replaceAll(",","."),//prezzo_in_offerta
+                                    currentRow[3].replaceAll(",","."),//Prezzo_di_listino
+                                    "+"+currentRow[1],//manage_stock/stock_quantitiy
+                                    "",//category_ids
+                                    formatter.formatCellValue(row.getCell(66, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)),//parent_sku
+                                    "2",//position
+                                    "condizione",//Attributo 1 nome
+                                    "Usato",//Attributo 1 valuta(e)
+                                    ""//Attributo 1 predefinito
+                                    );
+
+                                    //creo la riga del nuovo
+                                    createLine(
+                                    sb,
+                                    "variation",//type
+                                    "",//sku
+                                    formatter.formatCellValue(row.getCell(16, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)).replaceAll(",",".") + " - Nuovo",//name
+                                    "",//short description
+                                    "",//description
+                                    money.toString(),//prezzo_in_offerta
+                                    formatter.formatCellValue(row.getCell(89, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)),//Prezzo_di_listino
+                                    "+"+Integer.toString(quantity),//manage_stock/stock_quantitiy
+                                    "",//category_ids
+                                    formatter.formatCellValue(row.getCell(66, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)),//parent_sku
+                                    "1",//position
+                                    "condizione",//Attributo 1 nome
+                                    "Nuovo",//Attributo 1 valuta(e)
+                                    ""//Attributo 1 predefinito
+                                    );
+                                } else { //Sto creando le variazione dell'usato
+                                    //creo la riga dell'usato
+                                    createLine(
+                                    sb,
+                                    "variation",//type
+                                    "",//sku
+                                    formatter.formatCellValue(row.getCell(16, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)).replaceAll(",",".") + " - Usato",//name
+                                    "",//short description
+                                    "",//description
+                                    money.toString(),//prezzo_in_offerta
+                                    formatter.formatCellValue(row.getCell(89, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)),//Prezzo_di_listino
+                                    "+"+Integer.toString(quantity),//manage_stock/stock_quantitiy
+                                    "",//category_ids
+                                    formatter.formatCellValue(row.getCell(66, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)),//parent_sku
+                                    "2",//position
+                                    "condizione",//Attributo 1 nome
+                                    "Usato",//Attributo 1 valuta(e)
+                                    ""//Attributo 1 predefinito
+                                    );
+
+                                    //creo la riga del nuovo
+                                    createLine(
+                                    sb,
+                                    "variation",//type
+                                    "",//sku
+                                    formatter.formatCellValue(row.getCell(16, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)).replaceAll(",",".") + " - Nuovo",//name
+                                    "",//short description
+                                    "",//description
+                                    currentRow[2].replaceAll(",","."),//prezzo_in_offerta
+                                    currentRow[3].replaceAll(",","."),//Prezzo_di_listino
+                                    "+"+currentRow[1],//manage_stock/stock_quantitiy
+                                    "",//category_ids
+                                    formatter.formatCellValue(row.getCell(66, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)),//parent_sku
+                                    "1",//position
+                                    "condizione",//Attributo 1 nome
+                                    "Nuovo",//Attributo 1 valuta(e)
+                                    ""//Attributo 1 predefinito
+                                    );
+                                }
+                                
+
+                                trovato = true;
+                            }
+                            if(!trovato){
+                                //Il prodotto e' simple (non e' presente nell'export)
+                                createLine(
+                                sb,
+                                type,//type
+                                formatter.formatCellValue(row.getCell(66, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)),//sku
+                                formatter.formatCellValue(row.getCell(16, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)).replaceAll(",","."),//name
+                                "Autore: " + formatter.formatCellValue(row.getCell(39, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)) + "<br>Casa editrice: " + formatter.formatCellValue(row.getCell(48, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)) + "<br>ISBN: " + formatter.formatCellValue(row.getCell(66, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)),//short description
+                                description,//description
+                                money.toString(),//prezzo_in_offerta
+                                formatter.formatCellValue(row.getCell(89, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)),//Prezzo_di_listino
+                                "+"+Integer.toString(quantity),//manage_stock/stock_quantitiy
+                                category,//category_ids
+                                "",//parent_sku
+                                "",//position
+                                "",//Attributo 1 nome
+                                "",//Attributo 1 valuta(e)
+                                ""//Attributo 1 predefinito
+                                );
+                            }
+                        }
+                    }
+                    int percentage = (100 * i)/rows;
+                    publish(percentage);
+                }
+                
+                Date date = new Date();
+                LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                PrintWriter out = new PrintWriter(new FileOutputStream(fileDestination.getText() + localDate.getDayOfMonth()+ "_" +localDate.getMonthValue()+ "_" + localDate.getYear()+ "_" + LocalTime.now().getHour() + LocalTime.now().getMinute() + LocalTime.now().getSecond() + "_" + FilenameUtils.removeExtension(f.getName())+ "_" +"WooCommerce_CSV_Import.csv"), true);
+                out.println(sb.toString());
+
+                //System.out.println(sb.toString());
+                out.close();
+                wb.close();
+                
+                
+                
+            } catch (Throwable ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(mainPanel, "Errore nella creazione del CSV", "Errore", JOptionPane.ERROR_MESSAGE);
+                errors = true;
+                startButton.setEnabled(true);
+            }
+            return null;
+        }
+        
+        @Override
+        protected void process(List<Integer> chunks) {
+            //Aggiornamento della percentuale della progress bar
+            int i = chunks.get(chunks.size()-1);
+            JTA.setText(initialJTAText + System.lineSeparator() + "Progresso del file: " + i +"%");
+        }
+        
+        @Override
+        protected void done() {
+            if(!errors){
+                logArea.setText(JTA.getText() + System.lineSeparator() + "File CSV creato!");
+            }else{
+                logArea.setText(JTA.getText() + System.lineSeparator() + "Errore nella creazione del file CSV!");
+            }
+            startButton.setEnabled(true);
         }
     }
     
@@ -454,16 +909,22 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JButton fileChooserButton;
     private javax.swing.JTextField fileDestination;
     private javax.swing.JButton fileDestinationButton;
+    private javax.swing.JTextField fileExport;
+    private javax.swing.JButton fileExportButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea logArea;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JTextField salePercentage;
     private javax.swing.JTextField selectedFile;
     private javax.swing.JButton startButton;
+    private javax.swing.JCheckBox variazioneCheckbox;
+    private javax.swing.JComboBox<String> variazioneCombobox;
     // End of variables declaration//GEN-END:variables
 }
