@@ -75,6 +75,8 @@ public class Main extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         worksheetTypeCombobox = new javax.swing.JComboBox<>();
+        jLabel8 = new javax.swing.JLabel();
+        quantityTypeCombobox = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("WooCommerce CSV Creator");
@@ -136,6 +138,11 @@ public class Main extends javax.swing.JFrame {
 
         worksheetTypeCombobox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ordini", "Inventario" }));
 
+        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel8.setText("Seleziona il tipo di quantita:");
+
+        quantityTypeCombobox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "+", "-", "Esatta" }));
+
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
@@ -186,7 +193,11 @@ public class Main extends javax.swing.JFrame {
                             .addGroup(mainPanelLayout.createSequentialGroup()
                                 .addComponent(jLabel6)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(worksheetTypeCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(worksheetTypeCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(mainPanelLayout.createSequentialGroup()
+                                .addComponent(jLabel8)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(quantityTypeCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 0, Short.MAX_VALUE))))
         );
         mainPanelLayout.setVerticalGroup(
@@ -214,7 +225,11 @@ public class Main extends javax.swing.JFrame {
                     .addComponent(salePercentage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7)
                     .addComponent(variazioneCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(13, 13, 13)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(quantityTypeCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(descriptionValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -222,7 +237,7 @@ public class Main extends javax.swing.JFrame {
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(categoryValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(82, 82, 82)
+                .addGap(63, 63, 63)
                 .addComponent(startButton, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE)
@@ -272,7 +287,7 @@ public class Main extends javax.swing.JFrame {
             startButton.setEnabled(false);
             logArea.setText(logArea.getText() + System.lineSeparator() + "Inizio creazione del file csv..");
             
-            new csvVariationsCreator(workbook, variazioneCombobox.getSelectedIndex(), worksheetTypeCombobox.getSelectedIndex(), this.logArea).execute();
+            new csvVariationsCreator(workbook, variazioneCombobox.getSelectedIndex(), worksheetTypeCombobox.getSelectedIndex(), quantityTypeCombobox.getSelectedIndex(), this.logArea).execute();
             
         } else{
             JOptionPane.showMessageDialog(mainPanel, "Inserisci una percentuale di sconto!", "Errore", JOptionPane.ERROR_MESSAGE);
@@ -516,16 +531,17 @@ public class Main extends javax.swing.JFrame {
         File f;
         JTextArea JTA;
         String initialJTAText;
-        int indice, worksheetType;
+        int indice, worksheetType, quantityType;
         boolean errors;
         
-        public csvVariationsCreator(File f, int indice, int worksheetType, JTextArea JTA){
+        public csvVariationsCreator(File f, int indice, int worksheetType, int quantityType, JTextArea JTA){
             this.f = f;
             this.JTA = JTA;
             this.indice = indice;
             this.worksheetType = worksheetType;
             this.initialJTAText = JTA.getText();
             this.errors = false;
+            this.quantityType = quantityType;
         };
 
         @Override
@@ -596,7 +612,7 @@ public class Main extends javax.swing.JFrame {
                 DataFormatter formatter = new DataFormatter();
                 
                 int quantityIndex, isbnIndex, moneyIndex, nameIndex, authorIndex, publisherIndex = 0;
-                
+                String quantityTypeSelected = null;
                 if(worksheetType == 0){//File Ordini
                     quantityIndex = 79;
                     isbnIndex = 66;
@@ -607,10 +623,17 @@ public class Main extends javax.swing.JFrame {
                 }else{//File Inventario
                     quantityIndex = 23;
                     isbnIndex = 1;
-                    moneyIndex = 20;
+                    moneyIndex = 18;
                     nameIndex = 4;
                     authorIndex = 5;
                     publisherIndex = 6;
+                }
+                if(quantityType == 0){
+                    quantityTypeSelected = "+";
+                } else if(quantityType == 1){
+                    quantityTypeSelected = "-";
+                }else{
+                    quantityTypeSelected = "";
                 }
                 
                 //Bisogna inserire solo libri nel csv
@@ -670,7 +693,7 @@ public class Main extends javax.swing.JFrame {
                             "",//description
                             money.toString(),//prezzo_in_offerta
                             formatter.formatCellValue(row.getCell(moneyIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)),//Prezzo_di_listino
-                            "+"+Integer.toString(quantity),//manage_stock/stock_quantitiy
+                            quantityTypeSelected+Integer.toString(quantity),//manage_stock/stock_quantitiy
                             "",//category_ids
                             formatter.formatCellValue(row.getCell(isbnIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)),//parent_sku
                             "1",//position
@@ -688,7 +711,7 @@ public class Main extends javax.swing.JFrame {
                             "",//description
                             money.toString(),//prezzo_in_offerta
                             formatter.formatCellValue(row.getCell(moneyIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)),//Prezzo_di_listino
-                            "+"+Integer.toString(quantity),//manage_stock/stock_quantitiy
+                            quantityTypeSelected+Integer.toString(quantity),//manage_stock/stock_quantitiy
                             "",//category_ids
                             formatter.formatCellValue(row.getCell(isbnIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)),//parent_sku
                             "2",//position
@@ -785,9 +808,11 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea logArea;
     private javax.swing.JPanel mainPanel;
+    private javax.swing.JComboBox<String> quantityTypeCombobox;
     private javax.swing.JTextField salePercentage;
     private javax.swing.JTextField selectedFile;
     private javax.swing.JButton startButton;
