@@ -6,6 +6,7 @@
 package it.ldc.libridicarta;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
@@ -737,8 +738,13 @@ public class Main extends javax.swing.JFrame {
                 wb.close();
                 
                 
-                
+            }catch(FileNotFoundException fex){
+                JOptionPane.showMessageDialog(mainPanel, "Errore nell'accesso al file. É giá aperto in qualche altro programma?", "Errore", JOptionPane.WARNING_MESSAGE);
+                errors = true;
+                startButton.setEnabled(true);
             } catch (Throwable ex) {
+                ex.printStackTrace();
+                ex.getCause();
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                 JOptionPane.showMessageDialog(mainPanel, "Errore nella creazione del CSV", "Errore", JOptionPane.ERROR_MESSAGE);
                 errors = true;
