@@ -8,9 +8,13 @@ package it.ldc.libridicarta;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -43,6 +47,7 @@ public class Main extends javax.swing.JFrame {
     public Main() {
         initComponents();
         fileDestination.setText(FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + "\\");
+        
     }
     
     
@@ -468,7 +473,8 @@ public class Main extends javax.swing.JFrame {
     */
     
     
-    StringBuilder createLine(StringBuilder sb, String type, String sku, String name, String short_description, String description, String prezzo_in_offerta, String prezzo_di_listino, String quantity, String category, String parent_sku, String position, String attNome1, String attValuta1, String attPredef1){
+    
+    StringBuilder createLine(StringBuilder sb, String type, String sku, String name, String short_description, String description, String prezzo_in_offerta, String prezzo_di_listino, String quantity, String category, String parent_sku, String position, String attNome1, String attValuta1, String attPredef1, String fifuImgAlt, String fifuImgUrl){
         sb.append("");//id
         sb.append(',');
         sb.append(type);//type
@@ -524,6 +530,14 @@ public class Main extends javax.swing.JFrame {
         sb.append('"');
         sb.append(',');
         sb.append(attPredef1);//Attributo 1 predefinito
+        sb.append(',');
+        sb.append('"');
+        sb.append(fifuImgAlt);//FIFU img alt
+        sb.append('"');
+        sb.append(',');
+        sb.append('"');
+        sb.append(fifuImgUrl);//FIFU img url
+        sb.append('"');
         sb.append('\n');
         return sb;
     }
@@ -601,6 +615,10 @@ public class Main extends javax.swing.JFrame {
                 sb.append("Attributo 1 valuta(e)");
                 sb.append(',');
                 sb.append("Attributo 1 predefinito");
+                sb.append(',');
+                sb.append("Meta: fifu_image_alt");
+                sb.append(',');
+                sb.append("Meta: fifu_image_url");
                 sb.append('\n');
                 
                 int rows = s.getLastRowNum();
@@ -662,7 +680,6 @@ public class Main extends javax.swing.JFrame {
                         
                          
                         String type = "variable";
-                        
                         //Il prodotto non e' stato trovato (non e' presente nell'export)
 
                         //creo la riga del genitore
@@ -681,7 +698,9 @@ public class Main extends javax.swing.JFrame {
                         "0",//position
                         "condizione",//Attributo 1 nome
                         "Nuovo, Usato",//Attributo 1 valuta(e)
-                        "Usato"//Attributo 1 predefinito
+                        "Usato",//Attributo 1 predefinito
+                        formatter.formatCellValue(row.getCell(nameIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)).replaceAll(",","."),
+                        "https://img.ibs.it/images/"+formatter.formatCellValue(row.getCell(isbnIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK))+"_0_0_300_75.jpg"
                         );
 
                         if(indice == 0){//Nuovo
@@ -700,7 +719,9 @@ public class Main extends javax.swing.JFrame {
                             "1",//position
                             "condizione",//Attributo 1 nome
                             "Nuovo",//Attributo 1 valuta(e)
-                            ""//Attributo 1 predefinito
+                            "",//Attributo 1 predefinito
+                            "",
+                            ""
                             );
                         } else {//Usato
                             createLine(
@@ -718,7 +739,9 @@ public class Main extends javax.swing.JFrame {
                             "2",//position
                             "condizione",//Attributo 1 nome
                             "Usato",//Attributo 1 valuta(e)
-                            ""//Attributo 1 predefinito
+                            "",//Attributo 1 predefinito
+                            "",
+                            ""
                             );
                         }
                         
