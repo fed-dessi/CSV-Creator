@@ -474,7 +474,7 @@ public class Main extends javax.swing.JFrame {
     
     
     
-    StringBuilder createLine(StringBuilder sb, String type, String sku, String name, String short_description, String description, String prezzo_in_offerta, String prezzo_di_listino, String quantity, String category, String parent_sku, String position, String attNome1, String attValuta1, String attPredef1, String fifuImgAlt, String fifuImgUrl){
+    StringBuilder createLine(StringBuilder sb, String type, String sku, String name, String short_description, String description, String prezzo_in_offerta, String prezzo_di_listino, String quantity, String category, String parent_sku, String position, String attNome1, String attValuta1, String attPredef1, String fifuImgAlt, String fifuImgUrl, String galleryUrl){
         sb.append("");//id
         sb.append(',');
         sb.append(type);//type
@@ -537,6 +537,10 @@ public class Main extends javax.swing.JFrame {
         sb.append(',');
         sb.append('"');
         sb.append(fifuImgUrl);//FIFU img url
+        sb.append('"');
+        sb.append(',');
+        sb.append('"');
+        sb.append(galleryUrl);//img gallery url
         sb.append('"');
         sb.append('\n');
         return sb;
@@ -619,6 +623,8 @@ public class Main extends javax.swing.JFrame {
                 sb.append("Meta: fifu_image_alt");
                 sb.append(',');
                 sb.append("Meta: fifu_image_url");
+                sb.append(',');
+                sb.append("Images");
                 sb.append('\n');
                 
                 int rows = s.getLastRowNum();
@@ -633,12 +639,12 @@ public class Main extends javax.swing.JFrame {
                 int quantityIndex, isbnIndex, moneyIndex, nameIndex, authorIndex, publisherIndex = 0;
                 String quantityTypeSelected = null;
                 if(worksheetType == 0){//File Ordini
-                    quantityIndex = 79;
-                    isbnIndex = 66;
-                    moneyIndex = 89;
-                    nameIndex = 16;
-                    authorIndex = 39;
-                    publisherIndex = 48;
+                    quantityIndex = 68;
+                    isbnIndex = 62;
+                    moneyIndex = 73;
+                    nameIndex = 20;
+                    authorIndex = 44;
+                    publisherIndex = 52;
                 }else{//File Inventario
                     quantityIndex = 23;
                     isbnIndex = 1;
@@ -700,7 +706,8 @@ public class Main extends javax.swing.JFrame {
                         "Nuovo, Usato",//Attributo 1 valuta(e)
                         "Usato",//Attributo 1 predefinito
                         formatter.formatCellValue(row.getCell(nameIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)).replaceAll(",","."),
-                        "https://img.ibs.it/images/"+formatter.formatCellValue(row.getCell(isbnIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK))+"_0_0_300_75.jpg"
+                        "https://www.libridicartaonline.it/isbnPictures/"+formatter.formatCellValue(row.getCell(isbnIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK))+".jpg",
+                        formatter.formatCellValue(row.getCell(isbnIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK))+".jpg"
                         );
 
                         if(indice == 0){//Nuovo
@@ -721,6 +728,7 @@ public class Main extends javax.swing.JFrame {
                             "Nuovo",//Attributo 1 valuta(e)
                             "",//Attributo 1 predefinito
                             "",
+                            "",
                             ""
                             );
                         } else {//Usato
@@ -740,6 +748,7 @@ public class Main extends javax.swing.JFrame {
                             "condizione",//Attributo 1 nome
                             "Usato",//Attributo 1 valuta(e)
                             "",//Attributo 1 predefinito
+                            "",
                             "",
                             ""
                             );
