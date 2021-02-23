@@ -707,7 +707,7 @@ public class Main extends javax.swing.JFrame {
                         "Usato",//Attributo 1 predefinito
                         formatter.formatCellValue(row.getCell(nameIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)).replaceAll(",","."),
                         "https://www.libridicartaonline.it/isbnPictures/"+formatter.formatCellValue(row.getCell(isbnIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK))+".jpg",
-                        formatter.formatCellValue(row.getCell(isbnIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK))+".jpg"
+                        "https://www.libridicartaonline.it/isbnPictures/"+formatter.formatCellValue(row.getCell(isbnIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK))+".jpg"
                         );
 
                         if(indice == 0){//Nuovo
