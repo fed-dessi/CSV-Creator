@@ -83,6 +83,8 @@ public class Main extends javax.swing.JFrame {
         worksheetTypeCombobox = new javax.swing.JComboBox<>();
         jLabel8 = new javax.swing.JLabel();
         quantityTypeCombobox = new javax.swing.JComboBox<>();
+        jLabel9 = new javax.swing.JLabel();
+        dropdownImmagini = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("WooCommerce CSV Creator");
@@ -149,6 +151,11 @@ public class Main extends javax.swing.JFrame {
 
         quantityTypeCombobox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "+", "-", "Esatta" }));
 
+        jLabel9.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel9.setText("Includi immagini: ");
+
+        dropdownImmagini.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Si", "No" }));
+
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
@@ -184,26 +191,31 @@ public class Main extends javax.swing.JFrame {
                         .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4)
                             .addComponent(jLabel5)
-                            .addGroup(mainPanelLayout.createSequentialGroup()
-                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(mainPanelLayout.createSequentialGroup()
-                                        .addComponent(jLabel3)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(salePercentage, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel7))
-                                    .addComponent(descriptionValue))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(variazioneCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(categoryValue, javax.swing.GroupLayout.PREFERRED_SIZE, 356, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(mainPanelLayout.createSequentialGroup()
                                 .addComponent(jLabel6)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(worksheetTypeCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(mainPanelLayout.createSequentialGroup()
-                                .addComponent(jLabel8)
+                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addGroup(mainPanelLayout.createSequentialGroup()
+                                            .addComponent(jLabel3)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(salePercentage, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(jLabel7))
+                                        .addComponent(descriptionValue))
+                                    .addGroup(mainPanelLayout.createSequentialGroup()
+                                        .addComponent(jLabel8)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(quantityTypeCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jLabel9)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(quantityTypeCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(dropdownImmagini, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(variazioneCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGap(0, 0, Short.MAX_VALUE))))
         );
         mainPanelLayout.setVerticalGroup(
@@ -234,7 +246,9 @@ public class Main extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
-                    .addComponent(quantityTypeCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(quantityTypeCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel9)
+                    .addComponent(dropdownImmagini, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -653,12 +667,16 @@ public class Main extends javax.swing.JFrame {
                     authorIndex = 5;
                     publisherIndex = 6;
                 }
-                if(quantityType == 0){
-                    quantityTypeSelected = "+";
-                } else if(quantityType == 1){
-                    quantityTypeSelected = "-";
-                }else{
-                    quantityTypeSelected = "";
+                switch (quantityType) {
+                    case 0:
+                        quantityTypeSelected = "+";
+                        break;
+                    case 1:
+                        quantityTypeSelected = "-";
+                        break;
+                    default:
+                        quantityTypeSelected = "";
+                        break;
                 }
                 
                 //Bisogna inserire solo libri nel csv
@@ -684,6 +702,7 @@ public class Main extends javax.swing.JFrame {
                         percentage = percentage.setScale(2, RoundingMode.HALF_EVEN);
                         money = money.subtract(percentage);
                         
+                        String image = ImmaginiEnum.SI.getIndex() == dropdownImmagini.getSelectedIndex() ? "https://www.libridicartaonline.it/isbnPictures/"+formatter.formatCellValue(row.getCell(isbnIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK))+".jpg" : "";
                          
                         String type = "variable";
                         //Il prodotto non e' stato trovato (non e' presente nell'export)
@@ -706,8 +725,8 @@ public class Main extends javax.swing.JFrame {
                         "Nuovo, Usato",//Attributo 1 valuta(e)
                         "Usato",//Attributo 1 predefinito
                         formatter.formatCellValue(row.getCell(nameIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)).replaceAll(",","."),
-                        "https://www.libridicartaonline.it/isbnPictures/"+formatter.formatCellValue(row.getCell(isbnIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK))+".jpg",
-                        "https://www.libridicartaonline.it/isbnPictures/"+formatter.formatCellValue(row.getCell(isbnIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK))+".jpg"
+                        image,
+                        image
                         );
 
                         if(indice == 0){//Nuovo
@@ -836,6 +855,7 @@ public class Main extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField categoryValue;
     private javax.swing.JTextField descriptionValue;
+    private javax.swing.JComboBox<String> dropdownImmagini;
     private javax.swing.JButton fileChooserButton;
     private javax.swing.JTextField fileDestination;
     private javax.swing.JButton fileDestinationButton;
@@ -847,6 +867,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea logArea;
     private javax.swing.JPanel mainPanel;
