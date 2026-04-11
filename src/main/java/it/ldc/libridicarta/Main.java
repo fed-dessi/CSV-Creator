@@ -488,7 +488,7 @@ public class Main extends javax.swing.JFrame {
     
     
     
-    StringBuilder createLine(StringBuilder sb, String type, String sku, String name, String short_description, String description, String prezzo_in_offerta, String prezzo_di_listino, String quantity, String category, String parent_sku, String position, String attNome1, String attValuta1, String attPredef1, String fifuImgAlt, String fifuImgUrl, String galleryUrl){
+    StringBuilder createLine(StringBuilder sb, String type, String sku, String name, String short_description, String description, String prezzo_in_offerta, String prezzo_di_listino, String quantity, String category, String parent_sku, String position, String attNome1, String attValuta1, String attPredef1, String attVisible1, String attGlobal1, String fifuImgAlt, String fifuImgUrl){
         sb.append("");//id
         sb.append(',');
         sb.append(type);//type
@@ -536,14 +536,18 @@ public class Main extends javax.swing.JFrame {
         sb.append(position);//position
         sb.append(',');
         sb.append('"');
-        sb.append(attNome1);//Attributo 1 nome
+        sb.append(attNome1);//Attribute 1 name
         sb.append('"');
         sb.append(',');
         sb.append('"');
-        sb.append(attValuta1);//Attributo 1 valuta(e)
+        sb.append(attValuta1);//Attribute 1 value(s)
         sb.append('"');
         sb.append(',');
-        sb.append(attPredef1);//Attributo 1 predefinito
+        sb.append(attPredef1);//Attribute 1 default
+        sb.append(',');
+        sb.append(attVisible1);//Attribute 1 visible
+        sb.append(',');
+        sb.append(attGlobal1);//Attribute 1 global
         sb.append(',');
         sb.append('"');
         sb.append(fifuImgAlt);//FIFU img alt
@@ -551,10 +555,6 @@ public class Main extends javax.swing.JFrame {
         sb.append(',');
         sb.append('"');
         sb.append(fifuImgUrl);//FIFU img url
-        sb.append('"');
-        sb.append(',');
-        sb.append('"');
-        sb.append(galleryUrl);//img gallery url
         sb.append('"');
         sb.append('\n');
         return sb;
@@ -628,17 +628,19 @@ public class Main extends javax.swing.JFrame {
                 sb.append(',');
                 sb.append("position");
                 sb.append(',');
-                sb.append("Attributo 1 nome");
+                sb.append("Attribute 1 name");
                 sb.append(',');
-                sb.append("Attributo 1 valuta(e)");
+                sb.append("Attribute 1 value(s)");
                 sb.append(',');
-                sb.append("Attributo 1 predefinito");
+                sb.append("Attribute 1 default");
+                sb.append(',');
+                sb.append("Attribute 1 visible");
+                sb.append(',');
+                sb.append("Attribute 1 global");
                 sb.append(',');
                 sb.append("Meta: fifu_image_alt");
                 sb.append(',');
                 sb.append("Meta: fifu_image_url");
-                sb.append(',');
-                sb.append("Images");
                 sb.append('\n');
                 
                 int rows = s.getLastRowNum();
@@ -721,12 +723,13 @@ public class Main extends javax.swing.JFrame {
                         category,//category_ids
                         "",//parent_sku
                         "0",//position
-                        "condizione",//Attributo 1 nome
-                        "Nuovo, Usato",//Attributo 1 valuta(e)
-                        "Usato",//Attributo 1 predefinito
-                        formatter.formatCellValue(row.getCell(nameIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)).replaceAll(",","."),
-                        image,
-                        image
+                        "condizione",//Attribute 1 name
+                        "Nuovo, Usato",//Attribute 1 value(s)
+                        "Usato",//Attribute 1 default
+                        "1",//Attribute 1 visible
+                        "0",//Attribute 1 global
+                        formatter.formatCellValue(row.getCell(nameIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)).replaceAll(",","."),//FIFU img alt
+                        image//FIFU img url
                         );
 
                         if(indice == 0){//Nuovo
@@ -743,12 +746,13 @@ public class Main extends javax.swing.JFrame {
                             "",//category_ids
                             formatter.formatCellValue(row.getCell(isbnIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)),//parent_sku
                             "1",//position
-                            "condizione",//Attributo 1 nome
-                            "Nuovo",//Attributo 1 valuta(e)
-                            "",//Attributo 1 predefinito
-                            "",
-                            "",
-                            ""
+                            "condizione",//Attribute 1 name
+                            "Nuovo",//Attribute 1 value(s)
+                            "",//Attribute 1 default
+                            "1",//Attribute 1 visible
+                            "0",//Attribute 1 global
+                            "",//FIFU img alt
+                            ""//FIFU img url
                             );
                         } else {//Usato
                             createLine(
@@ -764,12 +768,13 @@ public class Main extends javax.swing.JFrame {
                             "",//category_ids
                             formatter.formatCellValue(row.getCell(isbnIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)),//parent_sku
                             "2",//position
-                            "condizione",//Attributo 1 nome
-                            "Usato",//Attributo 1 valuta(e)
-                            "",//Attributo 1 predefinito
-                            "",
-                            "",
-                            ""
+                            "condizione",//Attribute 1 name
+                            "Usato",//Attribute 1 value(s)
+                            "",//Attribute 1 default
+                            "1",//Attribute 1 visible
+                            "0",//Attribute 1 global
+                            "",//FIFU img alt
+                            ""//FIFU img url
                             );
                         }
                         
