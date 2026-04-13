@@ -8,13 +8,9 @@ package it.ldc.libridicarta;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -83,8 +79,6 @@ public class Main extends javax.swing.JFrame {
         worksheetTypeCombobox = new javax.swing.JComboBox<>();
         jLabel8 = new javax.swing.JLabel();
         quantityTypeCombobox = new javax.swing.JComboBox<>();
-        jLabel9 = new javax.swing.JLabel();
-        dropdownImmagini = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("WooCommerce CSV Creator");
@@ -151,11 +145,6 @@ public class Main extends javax.swing.JFrame {
 
         quantityTypeCombobox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "+", "-", "Esatta" }));
 
-        jLabel9.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabel9.setText("Includi immagini: ");
-
-        dropdownImmagini.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Si", "No" }));
-
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
@@ -209,13 +198,9 @@ public class Main extends javax.swing.JFrame {
                                     .addGroup(mainPanelLayout.createSequentialGroup()
                                         .addComponent(jLabel8)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(quantityTypeCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel9)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(dropdownImmagini, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(variazioneCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                        .addComponent(quantityTypeCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(21, 21, 21)
+                                .addComponent(variazioneCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 0, Short.MAX_VALUE))))
         );
         mainPanelLayout.setVerticalGroup(
@@ -246,9 +231,7 @@ public class Main extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
-                    .addComponent(quantityTypeCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9)
-                    .addComponent(dropdownImmagini, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(quantityTypeCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -313,181 +296,7 @@ public class Main extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(mainPanel, "Inserisci una percentuale di sconto!", "Errore", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_startButtonActionPerformed
-    
-    /*
-    **
-    **Kept for future reference (Might need it later)
-    **This swingWorker creates a new csv Import file for simple products only
-    **
-    class csvCreator extends SwingWorker<Integer, Integer>{
-        File f;
-        JTextArea JTA;
-        String initialJTAText;
-        boolean errors;
-        
-        public csvCreator(File f, JTextArea JTA){
-            this.f = f;
-            this.JTA = JTA;
-            this.initialJTAText = JTA.getText();
-            this.errors = false;
-        };
 
-        @Override
-        protected Integer doInBackground() throws Exception {
-            try {
-                //Creazione del workbook
-                Workbook wb = WorkbookFactory.create(f);
-
-                //Creazione del foglio di lavoro
-                Sheet s = wb.getSheetAt(0);
-
-                //Creazione della prima riga
-                StringBuilder sb = new StringBuilder();
-                sb.append("id");
-                sb.append(',');
-                sb.append("type");
-                sb.append(',');
-                sb.append("sku");
-                sb.append(',');
-                sb.append("name");
-                sb.append(',');
-                sb.append("pubblicato");
-                sb.append(',');
-                sb.append("catalog_visibility");
-                sb.append(',');
-                sb.append("short_description");
-                sb.append(',');
-                sb.append("description");
-                sb.append(',');
-                sb.append("tax_status");
-                sb.append(',');
-                sb.append("tax_class");
-                sb.append(',');
-                sb.append("stock_status");
-                sb.append(',');
-                sb.append("backorders");
-                sb.append(',');
-                sb.append("reviews_allowed");
-                sb.append(',');
-                sb.append("prezzo in offerta");
-                sb.append(',');
-                sb.append("prezzo di listino");
-                sb.append(',');
-                sb.append("magazzino");
-                sb.append(',');
-                sb.append("category_ids");
-                sb.append('\n');
-
-                int rows = s.getLastRowNum();
-                
-                String description = (descriptionValue.getText()!= null) ? descriptionValue.getText() : "";
-                String category = (categoryValue.getText()!= null) ? categoryValue.getText() : "";
-                BigDecimal percentageToRemove = new BigDecimal(salePercentage.getText());
-                
-
-                DataFormatter formatter = new DataFormatter();
-                //Bisogna inserire solo valori dinamici dentro il csv
-                for(int i = 0; i<rows+1; i++){
-                    //System.out.println("Riga: "+ i + " - ISBN: " + formatter.formatCellValue(s.getRow(i).getCell(isbnIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)));
-                    //Controllo che sia una riga con un libro (Hanno la quantita)
-                    if(!formatter.formatCellValue(s.getRow(i).getCell(quantityIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)).equals("")){
-                        int quantity= Integer.parseInt(formatter.formatCellValue(s.getRow(i).getCell(quantityIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)));
-                        while(formatter.formatCellValue(s.getRow(i).getCell(isbnIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)).equals(formatter.formatCellValue(s.getRow(i+1).getCell(isbnIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)))){
-                            quantity += Integer.parseInt(formatter.formatCellValue(s.getRow(i).getCell(quantityIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)));
-                            i++;
-                        }
-                        //System.out.println("Quantita: " + quantity);
-                        Row row = s.getRow(i);
-
-                        //calcolo lo sconto (bisogna aggiungere il replaceAll perche' java tende a formattare i numeri in base al Locale di un computer e alcune lingue usano la , per separare i centesimi che BigDecimal non accetta
-                        BigDecimal money = new BigDecimal(formatter.formatCellValue(row.getCell(moneyIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)).replaceAll(",","."));
-                        BigDecimal percentage = money.multiply(percentageToRemove);
-                        percentage = percentage.divide(new BigDecimal("100"), RoundingMode.HALF_EVEN);
-                        percentage = percentage.setScale(2, RoundingMode.HALF_EVEN);
-                        money = money.subtract(percentage);
-
-
-                        sb.append("");//id
-                        sb.append(',');
-                        sb.append("simple");//type
-                        sb.append(',');
-                        sb.append(formatter.formatCellValue(row.getCell(isbnIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)));//sku
-                        sb.append(',');
-                        sb.append(formatter.formatCellValue(row.getCell(nameIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)).replaceAll(",","."));//name
-                        sb.append(',');
-                        sb.append("1");//pubblicato
-                        sb.append(',');
-                        sb.append("visible");//catalog_visibility
-                        sb.append(',');
-                        sb.append("Autore: " + formatter.formatCellValue(row.getCell(authorIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)) + "<br>Casa editrice: " + formatter.formatCellValue(row.getCell(publisherIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)) + "<br>ISBN: " + formatter.formatCellValue(row.getCell(isbnIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)));//short description
-                        sb.append(',');
-                        sb.append('"');
-                        sb.append(description);//description
-                        sb.append('"');
-                        sb.append(',');
-                        sb.append("taxable");//tax_status
-                        sb.append(',');
-                        sb.append("standard");//tax_class
-                        sb.append(',');
-                        sb.append("1");//stock_status
-                        sb.append(',');
-                        sb.append("0");//backorders
-                        sb.append(',');
-                        sb.append("1");//reviews_allowed
-                        sb.append(',');
-                        sb.append(money.toString());//prezzo_in_offerta
-                        sb.append(',');
-                        sb.append('"');
-                        sb.append(formatter.formatCellValue(row.getCell(moneyIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)));//Prezzo_di_listino
-                        sb.append('"');
-                        sb.append(',');
-                        sb.append("+"+Integer.toString(quantity));//manage_stock/stock_quantitiy
-                        sb.append(',');
-                        sb.append('"');
-                        sb.append(category);//category_ids
-                        sb.append('"');
-                        sb.append('\n');
-                    }
-                    int percentage = (100 * i)/rows;
-                    publish(percentage);
-                }
-                Date date = new Date();
-                LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                PrintWriter out = new PrintWriter(new FileOutputStream(fileDestination.getText() + localDate.getDayOfMonth()+ "_" +localDate.getMonthValue()+ "_" + localDate.getYear()+ "_" + LocalTime.now().getHour() + LocalTime.now().getMinute() + LocalTime.now().getSecond() + "_" + FilenameUtils.removeExtension(f.getName())+ "_" +"WooCommerce_CSV_Import.csv"), true);
-                out.println(sb.toString());
-
-                //System.out.println(sb.toString());
-                out.close();
-                wb.close();
-            } catch (Throwable ex) {
-                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(mainPanel, "Errore nella creazione del CSV", "Errore", JOptionPane.ERROR_MESSAGE);
-                errors = true;
-            }
-            return null;
-        }
-        
-        @Override
-        protected void process(List<Integer> chunks) {
-            //Aggiornamento della percentuale della progress bar
-            int i = chunks.get(chunks.size()-1);
-            JTA.setText(initialJTAText + System.lineSeparator() + "Progresso del file: " + i +"%");
-        }
-        
-        @Override
-        protected void done() {
-            if(!errors){
-                logArea.setText(JTA.getText() + System.lineSeparator() + "File CSV creato!");
-            }else{
-                logArea.setText(JTA.getText() + System.lineSeparator() + "Errore nella creazione del file CSV!");
-            }
-            startButton.setEnabled(true);
-        }
-    }
-    */
-    
-    
-    
     StringBuilder createLine(StringBuilder sb, String type, String sku, String name, String short_description, String description, String prezzo_in_offerta, String prezzo_di_listino, String quantity, String category, String parent_sku, String position, String attNome1, String attValuta1, String attPredef1, String attVisible1, String attGlobal1, String fifuImgAlt, String fifuImgUrl){
         sb.append("");//id
         sb.append(',');
@@ -579,14 +388,9 @@ public class Main extends javax.swing.JFrame {
 
         @Override
         protected Integer doInBackground() throws Exception {
-            try {
-                
-                //Creazione del workbook
-                Workbook wb = WorkbookFactory.create(f);
-
+            try (Workbook wb = WorkbookFactory.create(f)){
                 //Creazione del foglio di lavoro
                 Sheet s = wb.getSheetAt(0);
-                
                 
                 //Creazione della prima riga
                 StringBuilder sb = new StringBuilder();
@@ -653,7 +457,7 @@ public class Main extends javax.swing.JFrame {
                 DataFormatter formatter = new DataFormatter();
                 
                 int quantityIndex, isbnIndex, moneyIndex, nameIndex, authorIndex, publisherIndex = 0;
-                String quantityTypeSelected = null;
+                
                 if(worksheetType == 0){//File Ordini
                     quantityIndex = 68;
                     isbnIndex = 62;
@@ -669,6 +473,8 @@ public class Main extends javax.swing.JFrame {
                     authorIndex = 5;
                     publisherIndex = 6;
                 }
+                
+                String quantityTypeSelected;
                 switch (quantityType) {
                     case 0:
                         quantityTypeSelected = "+";
@@ -704,7 +510,7 @@ public class Main extends javax.swing.JFrame {
                         percentage = percentage.setScale(2, RoundingMode.HALF_EVEN);
                         money = money.subtract(percentage);
                         
-                        String image = ImmaginiEnum.SI.getIndex() == dropdownImmagini.getSelectedIndex() ? "https://www.libridicartaonline.it/isbnPictures/"+formatter.formatCellValue(row.getCell(isbnIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK))+".jpg" : "";
+                        String image = "https://www.libridicartaonline.it/isbnPictures/"+formatter.formatCellValue(row.getCell(isbnIndex, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK))+".jpg";
                          
                         String type = "variable";
                         //Il prodotto non e' stato trovato (non e' presente nell'export)
@@ -786,11 +592,9 @@ public class Main extends javax.swing.JFrame {
                 
                 Date date = new Date();
                 LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                PrintWriter out = new PrintWriter(new FileOutputStream(fileDestination.getText() + localDate.getDayOfMonth()+ "_" +localDate.getMonthValue()+ "_" + localDate.getYear()+ "_" + LocalTime.now().getHour() + LocalTime.now().getMinute() + LocalTime.now().getSecond() + "_" + FilenameUtils.removeExtension(f.getName())+ "_" +"WooCommerce_CSV_Import.csv"), true);
-                out.println(sb.toString());
-
-                //System.out.println(sb.toString());
-                out.close();
+                try (PrintWriter out = new PrintWriter(new FileOutputStream(fileDestination.getText() + localDate.getDayOfMonth()+ "_" +localDate.getMonthValue()+ "_" + localDate.getYear()+ "_" + LocalTime.now().getHour() + LocalTime.now().getMinute() + LocalTime.now().getSecond() + "_" + FilenameUtils.removeExtension(f.getName())+ "_" +"WooCommerce_CSV_Import.csv"), true)) {
+                    out.println(sb.toString());
+                }
                 wb.close();
                 
                 
@@ -860,7 +664,6 @@ public class Main extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField categoryValue;
     private javax.swing.JTextField descriptionValue;
-    private javax.swing.JComboBox<String> dropdownImmagini;
     private javax.swing.JButton fileChooserButton;
     private javax.swing.JTextField fileDestination;
     private javax.swing.JButton fileDestinationButton;
@@ -872,7 +675,6 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea logArea;
     private javax.swing.JPanel mainPanel;
