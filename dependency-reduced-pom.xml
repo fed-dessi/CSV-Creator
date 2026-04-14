@@ -22,6 +22,7 @@
             <transformer>
               <mainClass>it.ldc.libridicarta.Main</mainClass>
             </transformer>
+            <transformer />
           </transformers>
         </configuration>
       </plugin>

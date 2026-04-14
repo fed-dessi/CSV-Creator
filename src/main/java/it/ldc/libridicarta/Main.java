@@ -607,6 +607,7 @@ public class Main extends javax.swing.JFrame {
                 ex.getCause();
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                 JOptionPane.showMessageDialog(mainPanel, "Errore nella creazione del CSV", "Errore", JOptionPane.ERROR_MESSAGE);
+                logArea.setText(JTA.getText() + System.lineSeparator() + "Dettaglio errore: " + ex.getMessage());
                 errors = true;
                 startButton.setEnabled(true);
             }
